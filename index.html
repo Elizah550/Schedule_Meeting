@@ -59,29 +59,14 @@
             margin-bottom: 10px;
         }
 
-        /* Style for AM time */
-        input[type="time"].am {
-            color: #005700; /* Dark Green */
-        }
-
-        /* Style for PM time */
-        input[type="time"].pm {
-            color: #000099; /* Dark Blue */
-        }
-
-        #periodIndicator {
-            font-weight: bold;
-            margin-left: 5px;
-        }
-
         .success-message {
             color: green;
             margin-top: 10px;
         }
 
-        .error-message {
-            color: red;
-            margin-top: 10px;
+        .business-chat-link {
+            color: #007bff; /* Blue color for links */
+            text-decoration: none;
         }
     </style>
 </head>
@@ -145,8 +130,14 @@
             .then(response => response.json())
             .then(data => {
                 if (data.statusCode === 200) {
-                    alert('Appointment scheduled successfully!');
-                    messageContainer.innerHTML = '<p class="success-message">Appointment scheduled successfully!</p>';
+                    // Display success message
+                    messageContainer.innerHTML = '<p class="success-message">Appointment scheduled successfully! <a href="#" id="businessChatLink">Open Business Chat</a></p>';
+                    
+                    // Open business chat when the link is clicked
+                    document.getElementById('businessChatLink').addEventListener('click', function(e) {
+                        e.preventDefault();
+                        window.open('https://wa.me/9392643148', '_blank');
+                    });
                 } else {
                     throw new Error(data.body);
                 }
