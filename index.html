@@ -73,6 +73,16 @@
             font-weight: bold;
             margin-left: 5px;
         }
+
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -88,6 +98,8 @@
         </div><br><br>
 
         <button type="submit">Schedule Appointment</button>
+
+        <div id="messageContainer"></div>
     </form>
 
     <script>
@@ -97,6 +109,7 @@
 
         const appointmentTimeInput = document.getElementById('appointmentTime');
         const periodIndicator = document.getElementById('periodIndicator');
+        const messageContainer = document.getElementById('messageContainer');
 
         // Change the color of the time input based on AM/PM selection
         appointmentTimeInput.addEventListener('input', function() {
@@ -129,22 +142,24 @@
                     'Content-Type': 'application/json'
                 }
             })
-            .then(response => {
-                if (response.ok) {
+            .then(response => response.json())
+            .then(data => {
+                if (data.statusCode === 200) {
                     alert('Appointment scheduled successfully!');
-                    // Optionally, redirect the user to a confirmation page
+                    messageContainer.innerHTML = '<p class="success-message">Appointment scheduled successfully!</p>';
                 } else {
-                    throw new Error('Failed to schedule appointment');
+                    throw new Error(data.body);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to schedule appointment. Please try again later.');
+                messageContainer.innerHTML = '<p class="error-message">' + error.message + '</p>';
             });
         });
     </script>
 </body>
 </html>
+
 
 
 <!-- <!DOCTYPE html>
