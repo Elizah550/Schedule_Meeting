@@ -67,6 +67,186 @@
         .business-chat-link {
             display: none;
         }
+
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 5px solid #3498db;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+            margin-bottom: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Appointment Scheduling</h1>
+    <form id="appointmentForm">
+        <label for="appointmentDate">Date:</label>
+        <input type="date" id="appointmentDate" name="appointmentDate" min="" required><br><br>
+
+        <label for="appointmentTime">Time:</label>
+        <div id="timeContainer">
+            <input type="time" id="appointmentTime" name="appointmentTime" required>
+            <span id="periodIndicator"></span>
+        </div><br><br>
+
+        <button type="submit">Schedule Appointment</button>
+
+        <div id="messageContainer"></div>
+    </form>
+
+    <script>
+        // Set min date for appointmentDate input to today's date
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('appointmentDate').setAttribute('min', today);
+
+        const appointmentTimeInput = document.getElementById('appointmentTime');
+        const periodIndicator = document.getElementById('periodIndicator');
+        const messageContainer = document.getElementById('messageContainer');
+
+        // Change the color of the time input based on AM/PM selection
+        appointmentTimeInput.addEventListener('input', function() {
+            const time = appointmentTimeInput.value;
+            if (time) {
+                const hour = parseInt(time.split(':')[0]);
+                const period = hour >= 12 ? 'PM' : 'AM';
+                appointmentTimeInput.className = period.toLowerCase();
+                periodIndicator.textContent = period;
+            }
+        });
+
+        document.getElementById('appointmentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            const appointmentDate = formData.get('appointmentDate');
+            const appointmentTime = formData.get('appointmentTime');
+            
+            const data = {
+                date: appointmentDate,
+                time: appointmentTime
+            };
+            
+            // Display loader
+            const loader = document.createElement('div');
+            loader.className = 'loader';
+            messageContainer.innerHTML = '';
+            messageContainer.appendChild(loader);
+
+            // Make API call to Lambda function
+            fetch('https://2rpiqk7ay6.execute-api.ap-south-1.amazonaws.com/appointmentsfp', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.statusCode === 200) {
+                    // Hide loader
+                    messageContainer.removeChild(loader);
+
+                    // Display success message
+                    messageContainer.innerHTML = '<p class="success-message">Appointment scheduled successfully!</p>';
+
+                    // Open WhatsApp Business chat after 2 seconds
+                    setTimeout(function() {
+                        window.open('https://wa.me/9392643148', '_blank');
+                    }, 2000);
+                } else {
+                    throw new Error(data.body);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Hide loader
+                messageContainer.removeChild(loader);
+                messageContainer.innerHTML = '<p class="error-message">' + error.message + '</p>';
+            });
+        });
+    </script>
+</body>
+</html>
+
+<!-- Appointment-with-2 sec--loading  -->
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Scheduling</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="date"],
+        input[type="time"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+
+        .business-chat-link {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -147,7 +327,7 @@
         });
     </script>
 </body>
-</html>
+</html> -->
 
 <!-- Appointment-booking-working-------- -->
 <!-- <!DOCTYPE html>
