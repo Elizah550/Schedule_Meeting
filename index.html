@@ -61,12 +61,17 @@
 
         /* Style for AM time */
         input[type="time"].am {
-            color: green;
+            color: #005700; /* Dark Green */
         }
 
         /* Style for PM time */
         input[type="time"].pm {
-            color: blue;
+            color: #000099; /* Dark Blue */
+        }
+
+        #periodIndicator {
+            font-weight: bold;
+            margin-left: 5px;
         }
     </style>
 </head>
@@ -77,7 +82,10 @@
         <input type="date" id="appointmentDate" name="appointmentDate" min="" required><br><br>
 
         <label for="appointmentTime">Time:</label>
-        <input type="time" id="appointmentTime" name="appointmentTime" required><br><br>
+        <div id="timeContainer">
+            <input type="time" id="appointmentTime" name="appointmentTime" required>
+            <span id="periodIndicator"></span>
+        </div><br><br>
 
         <button type="submit">Schedule Appointment</button>
     </form>
@@ -88,14 +96,16 @@
         document.getElementById('appointmentDate').setAttribute('min', today);
 
         const appointmentTimeInput = document.getElementById('appointmentTime');
+        const periodIndicator = document.getElementById('periodIndicator');
 
         // Change the color of the time input based on AM/PM selection
         appointmentTimeInput.addEventListener('input', function() {
             const time = appointmentTimeInput.value;
             if (time) {
                 const hour = parseInt(time.split(':')[0]);
-                const period = hour >= 12 ? 'pm' : 'am';
-                appointmentTimeInput.className = period;
+                const period = hour >= 12 ? 'PM' : 'AM';
+                appointmentTimeInput.className = period.toLowerCase();
+                periodIndicator.textContent = period;
             }
         });
 
@@ -135,6 +145,7 @@
     </script>
 </body>
 </html>
+
 
 <!-- <!DOCTYPE html>
 <html lang="en">
