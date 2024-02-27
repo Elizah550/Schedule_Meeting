@@ -64,6 +64,21 @@
             color: green;
             margin-top: 10px;
         }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -124,6 +139,10 @@
 
                     // Display success message
                     document.getElementById('messageContainer').innerHTML = '<p class="success-message">Appointment scheduled successfully!</p>';
+                    
+                    // Open WhatsApp chat
+                    const whatsappURL = `https://wa.me/${9133599721}?text=Your%20appointment%20for%20${encodeURIComponent(appointmentDate)}%20at%20${encodeURIComponent(appointmentTime)}%20has%20been%20scheduled.%20Please%20make%20sure%20to%20attend.`;
+                    window.open(whatsappURL, '_blank');
                 } else {
                     throw new Error(data.body);
                 }
@@ -138,6 +157,7 @@
     </script>
 </body>
 </html>
+
 
 <!-- Working----code--------- -->
 <!-- <!DOCTYPE html>
