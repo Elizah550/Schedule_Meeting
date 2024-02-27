@@ -141,7 +141,7 @@
                     document.getElementById('messageContainer').innerHTML = '<p class="success-message">Appointment scheduled successfully!</p>';
                     
                     // Open WhatsApp chat
-                    const whatsappURL = `https://wa.me/${9392643148}?text=Your%20appointment%20for%20${encodeURIComponent(appointmentDate)}%20at%20${encodeURIComponent(appointmentTime)}%20has%20been%20scheduled.%20Please%20make%20sure%20to%20attend.`;
+                    const whatsappURL = `https://wa.me/${9392643148}?text=My%20appointment%20for%20${encodeURIComponent(appointmentDate)}%20at%20${encodeURIComponent(appointmentTime)}%20has%20been%20scheduled.%20Please%20make%20sure%20to%20attend.`;
                     window.open(whatsappURL, '_blank');
                 } else {
                     throw new Error(data.body);
