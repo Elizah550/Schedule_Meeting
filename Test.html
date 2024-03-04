@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Screenshot</title>
+    <script>
+        function validateAndRedirect() {
+            // Validate screenshot timestamp
+            var screenshot = document.getElementById('screenshot').files[0];
+            if (screenshot) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var img = new Image();
+                    img.onload = function () {
+                        var timestamp = new Date(img.lastModified);
+                        var currentTime = new Date();
+                        // Assuming IST is 5 hours and 30 minutes ahead of UTC
+                        currentTime.setHours(currentTime.getHours() + 5);
+                        currentTime.setMinutes(currentTime.getMinutes() + 30);
+                        var diff = Math.abs(currentTime - timestamp) / 60000; // Difference in minutes
+                        if (diff <= 3) {
+                            // Timestamp is valid, proceed with UTR validation
+                            var utr = prompt("Please enter your UTR number:");
+                            if (utr) {
+                                // Redirect to the app
+                                window.location.href = 'app://redirect';
+                            } else {
+                                alert("UTR number is required.");
+                            }
+                        } else {
+                            alert("Screenshot is older than 3 minutes.");
+                        }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(screenshot);
+            } else {
+                alert("Please select a screenshot.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <h2>Upload your screenshot</h2>
+    <form>
+        <input type="file" id="screenshot" name="screenshot"><br><br>
+        <input type="button" value="Upload" onclick="validateAndRedirect()">
+    </form>
+</body>
+</html>
