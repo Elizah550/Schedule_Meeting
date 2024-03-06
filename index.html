@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -10,7 +10,6 @@
             margin: 0;
             padding: 20px;
         }
-
         h1 {
             margin-bottom: 20px;
             text-align: center;
@@ -128,8 +127,8 @@
             document.getElementById('messageContainer').innerHTML = '';
             document.getElementById('messageContainer').appendChild(loader);
 
-            // Make API call to Lambda function
-            fetch('https://2rpiqk7ay6.execute-api.ap-south-1.amazonaws.com/appointmentsfp', {
+            // Make API call to DynamoDB
+            fetch('https://your-dynamodb-api-endpoint', {
                 method: 'POST',
                 body: JSON.stringify(data),
                 headers: {
@@ -156,14 +155,32 @@
                 const errorMessage = error.message ? error.message : 'An error occurred while processing your request.';
                 document.getElementById('messageContainer').innerHTML = '<p class="error-message">' + errorMessage + '</p>';
             });
+
+            // Make API call to Google Sheets
+            fetch('https://sheets.googleapis.com/v4/spreadsheets/1rZylSNiYNwdfzCYv3kjQGIe2AFuBVASgT2S2zBruwLk/values/Sheet1!A1:append?valueInputOption=USER_ENTERED', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ff8558863435ff4903690d5834cabab5d7912399',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'values': [Object.values(data)]
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Data appended to Google Sheets:', data);
+            })
+            .catch(error => {
+                console.error('Error appending data to Google Sheets:', error);
+            });
         });
     </script>
 </body>
-</html>
-
+</html> -->
 
 <!-- <Working--code--3.0> -->
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -326,7 +343,7 @@
         });
     </script>
 </body>
-</html> -->
+</html>
 
 <!-- Working-code-2.0 -->
 <!-- <!DOCTYPE html>
