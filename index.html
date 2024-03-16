@@ -1,3 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Scheduling</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background-color: #f9f9f9;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="date"],
+        input[type="time"],
+        input[type="text"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Appointment Scheduling</h1>
+    <form id="appointmentForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="appointmentDate">Date:</label>
+        <input type="date" id="appointmentDate" name="appointmentDate" min="" required><br><br>
+
+        <label for="appointmentTime">Time:</label>
+        <input type="time" id="appointmentTime" name="appointmentTime" required><br><br>
+
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" required><br><br>
+
+        <button type="submit">Schedule Appointment</button>
+
+        <div id="messageContainer"></div>
+    </form>
+
+    <script>
+        // Set min date for appointmentDate input to today's date
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('appointmentDate').setAttribute('min', today);
+
+        document.getElementById('appointmentForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            const name = formData.get('name');
+            const appointmentDate = formData.get('appointmentDate');
+            const appointmentTime = formData.get('appointmentTime');
+            const phoneNumber = formData.get('phoneNumber');
+            
+            const data = {
+                name: name,
+                date: appointmentDate,
+                time: appointmentTime,
+                phone_number: phoneNumber // Include phone number in the data
+            };
+            
+            // Display loader
+            const loader = document.createElement('div');
+            loader.className = 'loader';
+            document.getElementById('messageContainer').innerHTML = '';
+            document.getElementById('messageContainer').appendChild(loader);
+
+            // Make API call to Google Sheets
+            fetch('https://script.google.com/macros/s/AKfycbzZjImFzXesZwrhTFKMWU0Ym4aQHzcOVxnDEMnWlW0422cmMyhd0GxbKxxLmM5mDVR8/exec', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Call DynamoDB API
+                    fetch('https://2rpiqk7ay6.execute-api.ap-south-1.amazonaws.com/appointmentsfp', {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Both Google Sheets and DynamoDB operation successful
+                        // Hide loader
+                        document.getElementById('messageContainer').removeChild(loader);
+
+                        // Display success message
+                        document.getElementById('messageContainer').innerHTML = '<p class="success-message">Appointment scheduled successfully!</p>';
+                        
+                        // Open WhatsApp chat
+                        const whatsappURL = `https://wa.me/9392643148`;
+                        window.open(whatsappURL, '_blank');
+                    })
+                    .catch(error => {
+                        // Error in DynamoDB operation
+                        console.error('Error in DynamoDB:', error);
+                        showError(error.message);
+                    });
+                } else {
+                    // Error in Google Sheets operation
+                    showError('Failed to schedule appointment');
+                }
+            })
+            .catch(error => {
+                // Error in Google Sheets operation
+                console.error('Error in Google Sheets:', error);
+                showError(error.message);
+            });
+
+            function showError(errorMessage) {
+                // Hide loader
+                document.getElementById('messageContainer').removeChild(loader);
+                document.getElementById('messageContainer').innerHTML = '<p class="error-message">' + errorMessage + '</p>';
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
 <!-- <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -180,7 +373,7 @@
 </html> -->
 
 <!-- <Working--code--3.0> -->
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -343,7 +536,7 @@
         });
     </script>
 </body>
-</html>
+</html> -->
 
 <!-- Working-code-2.0 -->
 <!-- <!DOCTYPE html>
