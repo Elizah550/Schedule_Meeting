@@ -96,7 +96,7 @@
         <label for="phoneNumber">Phone Number:</label>
         <input type="text" id="phoneNumber" name="phoneNumber" required><br><br>
 
-        <button type="submit">Schedule Appointment</button>
+        <button type="button" onclick="scheduleAppointment()">Schedule Appointment</button>
 
         <div id="messageContainer"></div>
     </form>
@@ -106,22 +106,19 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('appointmentDate').setAttribute('min', today);
 
-        document.getElementById('appointmentForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const formData = new FormData(this);
-            const name = formData.get('name');
-            const appointmentDate = formData.get('appointmentDate');
-            const appointmentTime = formData.get('appointmentTime');
-            const phoneNumber = formData.get('phoneNumber');
+        function scheduleAppointment() {
+            const name = document.getElementById('name').value;
+            const appointmentDate = document.getElementById('appointmentDate').value;
+            const appointmentTime = document.getElementById('appointmentTime').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
             
             const data = {
                 name: name,
                 date: appointmentDate,
                 time: appointmentTime,
-                phone_number: phoneNumber // Include phone number in the data
+                phone_number: phoneNumber
             };
-            
+
             // Display loader
             const loader = document.createElement('div');
             loader.className = 'loader';
@@ -175,16 +172,17 @@
                 console.error('Error in Google Sheets:', error);
                 showError(error.message);
             });
+        }
 
-            function showError(errorMessage) {
-                // Hide loader
-                document.getElementById('messageContainer').removeChild(loader);
-                document.getElementById('messageContainer').innerHTML = '<p class="error-message">' + errorMessage + '</p>';
-            }
-        });
+        function showError(errorMessage) {
+            // Hide loader
+            document.getElementById('messageContainer').removeChild(loader);
+            document.getElementById('messageContainer').innerHTML = '<p class="error-message">' + errorMessage + '</p>';
+        }
     </script>
 </body>
 </html>
+
 
 
 
